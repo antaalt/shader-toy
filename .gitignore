@@ -1,0 +1,11 @@
+node_modules/
+dist/
+*.local
+.DS_Store
+
+# Language server binaries are dropped in by hand, not committed.
+public/lsp/*.wasm
+
+# Test fixtures
+scratch/test-server/target/
+scratch/*.log
