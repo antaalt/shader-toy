@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>shader-toy</title>
+  </head>
+  <body>
+    <main id="app">
+      <section class="pane" id="editor-pane">
+        <header class="pane-header">
+          <span class="pane-title">shader.wgsl</span>
+          <span class="badge" id="lsp-status" data-state="pending">lsp: starting…</span>
+        </header>
+        <div id="editor"></div>
+      </section>
+
+      <div id="splitter" role="separator" aria-orientation="vertical" aria-label="Resize panes" tabindex="0"></div>
+
+      <section class="pane" id="render-pane">
+        <header class="pane-header">
+          <span class="pane-title">WebGPU</span>
+          <span class="badge" id="render-status" data-state="pending">initialising…</span>
+        </header>
+        <div id="canvas-host">
+          <canvas id="gpu-canvas"></canvas>
+          <div id="gpu-overlay" hidden></div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

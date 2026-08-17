@@ -1,0 +1,154 @@
+:root {
+  --bg: #16181d;
+  --pane-bg: #1e2127;
+  --header-bg: #22262e;
+  --border: #31363f;
+  --text: #d7dae0;
+  --muted: #8b93a1;
+  --ok: #6fcf7f;
+  --warn: #e0c169;
+  --err: #e57373;
+  --split: 50%;
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font: 13px/1.5 ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+#app {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--pane-bg);
+}
+
+#editor-pane {
+  flex: 0 0 var(--split);
+}
+
+#render-pane {
+  flex: 1 1 auto;
+  border-left: 1px solid var(--border);
+}
+
+.pane-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex: 0 0 auto;
+  height: 34px;
+  padding: 0 12px;
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--border);
+  user-select: none;
+}
+
+.pane-title {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.badge {
+  font-family: ui-monospace, 'Cascadia Code', 'Consolas', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.badge[data-state='ok'] {
+  color: var(--ok);
+}
+.badge[data-state='warn'] {
+  color: var(--warn);
+}
+.badge[data-state='error'] {
+  color: var(--err);
+}
+
+#editor {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Splitter ---------------------------------------------------------------- */
+
+#splitter {
+  flex: 0 0 5px;
+  cursor: col-resize;
+  background: var(--border);
+  transition: background 120ms ease;
+}
+
+#splitter:hover,
+#splitter:focus-visible,
+#splitter[data-dragging='true'] {
+  background: #4d75c4;
+  outline: none;
+}
+
+/* Renderer -------------------------------------------------------------- */
+
+#canvas-host {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  background: #000;
+}
+
+#gpu-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+#gpu-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  text-align: center;
+  background: rgba(22, 24, 29, 0.92);
+  color: var(--err);
+  font-family: ui-monospace, 'Cascadia Code', 'Consolas', monospace;
+  font-size: 12px;
+  white-space: pre-wrap;
+}
+
+#gpu-overlay[hidden] {
+  display: none;
+}
+
+/* While dragging the splitter, stop the iframe-less canvas and editor from
+   swallowing pointer events or showing text selection. */
+body[data-dragging='true'] {
+  cursor: col-resize;
+  user-select: none;
+}
+
+body[data-dragging='true'] #editor,
+body[data-dragging='true'] #canvas-host {
+  pointer-events: none;
+}

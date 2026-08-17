@@ -1,0 +1,35 @@
+{
+  "name": "shader-toy",
+  "version": "1.0.0",
+  "description": "Small shader-toy prototype: Monaco editor + WebGPU renderer with a WASI language server",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --import ./scratch/register.mjs scratch/test.mjs",
+    "test:wasi": "node --experimental-strip-types --import ./scratch/register.mjs scratch/testWasi.mjs",
+    "build:test-server": "cargo build --release --target wasm32-wasip1 --manifest-path scratch/test-server/Cargo.toml"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/antaalt/shader-toy.git"
+  },
+  "author": "antaalt",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/antaalt/shader-toy/issues"
+  },
+  "homepage": "https://github.com/antaalt/shader-toy#readme",
+  "dependencies": {
+    "@bjorn3/browser_wasi_shim": "^0.4.2",
+    "monaco-editor": "0.54.0"
+  },
+  "devDependencies": {
+    "@webgpu/types": "^0.1.68",
+    "typescript": "^5.9.2",
+    "vite": "^8.2.1"
+  }
+}
