@@ -25,8 +25,9 @@
   "homepage": "https://github.com/antaalt/shader-toy#readme",
   "dependencies": {
     "@bjorn3/browser_wasi_shim": "^0.4.2",
+    "@shikijs/monaco": "^4.4.3",
     "monaco-editor": "0.54.0",
-    "monaco-themes": "^0.4.8"
+    "shiki": "^4.4.3"
   },
   "devDependencies": {
     "@webgpu/types": "^0.1.68",

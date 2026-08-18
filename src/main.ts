@@ -24,7 +24,7 @@ const lspStatus = requireElement('lsp-status')
 
 setupSplitter(splitter, app)
 
-const { editor, model } = createEditor(editorContainer, DEFAULT_SHADER)
+const { editor, model } = await createEditor(editorContainer, DEFAULT_SHADER)
 
 void startRenderer()
 void startLanguageServer()

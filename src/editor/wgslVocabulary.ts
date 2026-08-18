@@ -2,13 +2,17 @@
  * WGSL vocabulary, used by the built-in completion fallback in
  * `src/lsp/fallbackProvider.ts`.
  *
- * The `wgsl` language itself — tokenizer, brackets, comments — comes from
- * monaco-editor's own basic-languages bundle, which registers it lazily on
- * first use. Nothing here re-registers it; defining a competing Monarch
- * provider for the same id would just race that lazy loader.
+ * Tokenizer, brackets and comments come from `setupTextMate.ts`, which drives a
+ * TextMate grammar through shiki.
  */
 
-export const WGSL_LANGUAGE_ID = 'wgsl'
+/**
+ * Deliberately not `wgsl`: monaco-editor's basic-languages bundle owns that id
+ * and installs a Monarch tokenizer for it lazily, on first use of the language.
+ * That lazy registration would race — and could silently replace — the TextMate
+ * tokens provider, since whichever registers last wins.
+ */
+export const WGSL_LANGUAGE_ID = 'wgsl-textmate'
 
 /** Reserved words and declaration/statement keywords. */
 export const WGSL_KEYWORDS = [

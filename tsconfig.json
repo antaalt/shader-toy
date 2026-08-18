@@ -5,8 +5,7 @@
     "moduleResolution": "bundler",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "types": ["vite/client", "@webgpu/types"],
-    // Needed for the Monokai theme definition, imported straight from
-    // `monaco-themes/themes/Monokai.json`.
+    // The TextMate grammar in `src/editor/wgsl.tmLanguage.json` is imported.
     "resolveJsonModule": true,
 
     "strict": true,

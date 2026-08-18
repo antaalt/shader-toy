@@ -1,7 +1,7 @@
 import * as monaco from 'monaco-editor'
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
 import { WGSL_LANGUAGE_ID } from './wgslVocabulary'
-import { MONOKAI_THEME_ID, defineMonokaiTheme } from './monokaiTheme'
+import { THEME_ID, installTextMateHighlighting, registerWgslLanguage } from './setupTextMate'
 
 // Only the base editor worker is needed: the document is WGSL, and none of
 // Monaco's bundled language services (ts/json/css/html) are used.
@@ -20,20 +20,24 @@ export interface EditorHandle {
   model: monaco.editor.ITextModel
 }
 
-export function createEditor(container: HTMLElement, initialValue: string): EditorHandle {
-  // `wgsl` is contributed by monaco-editor's basic-languages bundle; creating a
-  // model with that language id triggers its lazy tokenizer load.
+export async function createEditor(
+  container: HTMLElement,
+  initialValue: string,
+): Promise<EditorHandle> {
+  registerWgslLanguage()
+  // Loads the Oniguruma WASM and the TextMate grammar, then registers both the
+  // tokens provider and the theme. Awaited so the first paint is highlighted.
+  await installTextMateHighlighting()
+
   const model = monaco.editor.createModel(
     initialValue,
     WGSL_LANGUAGE_ID,
     monaco.Uri.parse(DOCUMENT_URI),
   )
 
-  defineMonokaiTheme()
-
   const editor = monaco.editor.create(container, {
     model,
-    theme: MONOKAI_THEME_ID,
+    theme: THEME_ID,
     automaticLayout: true,
     fontSize: 13,
     fontLigatures: true,
