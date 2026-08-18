@@ -5,6 +5,9 @@
     "moduleResolution": "bundler",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "types": ["vite/client", "@webgpu/types"],
+    // Needed for the Monokai theme definition, imported straight from
+    // `monaco-themes/themes/Monokai.json`.
+    "resolveJsonModule": true,
 
     "strict": true,
     "noUnusedLocals": true,

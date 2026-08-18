@@ -1,6 +1,7 @@
 import * as monaco from 'monaco-editor'
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
 import { WGSL_LANGUAGE_ID } from './wgslVocabulary'
+import { MONOKAI_THEME_ID, defineMonokaiTheme } from './monokaiTheme'
 
 // Only the base editor worker is needed: the document is WGSL, and none of
 // Monaco's bundled language services (ts/json/css/html) are used.
@@ -28,9 +29,11 @@ export function createEditor(container: HTMLElement, initialValue: string): Edit
     monaco.Uri.parse(DOCUMENT_URI),
   )
 
+  defineMonokaiTheme()
+
   const editor = monaco.editor.create(container, {
     model,
-    theme: 'vs-dark',
+    theme: MONOKAI_THEME_ID,
     automaticLayout: true,
     fontSize: 13,
     fontLigatures: true,
