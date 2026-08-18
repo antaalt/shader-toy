@@ -1,5 +1,6 @@
 import './style.css'
 import * as monaco from 'monaco-editor'
+import { ensureCrossOriginIsolated } from './coiServiceWorker'
 import { LANGUAGE_SERVER } from './config'
 import { createEditor, WORKSPACE_URI } from './editor/setupEditor'
 import { WGSL_LANGUAGE_ID } from './editor/wgslVocabulary'
@@ -13,6 +14,10 @@ import { setupSplitter } from './ui/splitter'
 
 const RENDERER_MARKER_OWNER = 'webgpu'
 const RECOMPILE_DEBOUNCE_MS = 300
+
+// Must run before anything expensive: on a host that cannot send COOP/COEP this
+// reloads the page once, through a service worker that adds them.
+await ensureCrossOriginIsolated()
 
 const app = requireElement('app')
 const editorContainer = requireElement('editor')

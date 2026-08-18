@@ -1,0 +1,59 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time, but never cancel one that is already publishing.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # `public/lsp/*.wasm` is gitignored, so the server binary is fetched here.
+      # The zip holds a single `shader-language-server.wasm`, which is the name
+      # `LANGUAGE_SERVER.wasmUrl` in src/config.ts expects. Pin a release by
+      # replacing `latest/download` with `download/<tag>`, e.g. `download/v1.4.3`.
+      - name: Download WASI language server
+        run: |
+          curl -fsSL -o server.zip \
+            https://github.com/antaalt/shader-language-server/releases/latest/download/shader-language-server-wasm32-wasip1-threads.zip
+          unzip -o server.zip -d public/lsp
+          rm server.zip
+          ls -l public/lsp/shader-language-server.wasm
+
+      # `npm run build` is `tsc --noEmit && vite build`, so type errors fail here.
+      # vite copies public/ into dist/, so the wasm ships with the site.
+      - run: npm run build
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

@@ -9,9 +9,15 @@ const crossOriginIsolation = {
   'Cross-Origin-Embedder-Policy': 'require-corp',
 }
 
-export default defineConfig({
+// GitHub Pages serves this project from https://antaalt.github.io/shader-toy/,
+// so built asset URLs need the repository name as a prefix. Update this if the
+// repository is renamed or moved behind a custom domain.
+const PAGES_BASE = '/shader-toy/'
+
+export default defineConfig(({ command }) => ({
+  base: command === 'build' ? PAGES_BASE : '/',
   server: { headers: crossOriginIsolation },
   preview: { headers: crossOriginIsolation },
   worker: { format: 'es' },
   build: { target: 'esnext' },
-})
+}))

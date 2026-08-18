@@ -63,6 +63,11 @@ Cross-Origin-Embedder-Policy: require-corp
 Without them `probeWasiServer` reports the reason and the app uses the
 fallback provider.
 
+Hosts that cannot set headers at all — GitHub Pages, for one — are covered by
+`public/coi-serviceworker.js`, a service worker that re-serves every response
+with those two headers. `src/coiServiceWorker.ts` registers it and reloads the
+page once so the document itself comes through the worker.
+
 ## Debugging
 
 - Server crashed or exited: `[lsp] language server exited with code N` in the
