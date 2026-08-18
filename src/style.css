@@ -152,3 +152,9 @@ body[data-dragging='true'] #editor,
 body[data-dragging='true'] #canvas-host {
   pointer-events: none;
 }
+
+/* Monaco -------------------------------------------------------------- */
+
+.editable-line {
+  background-color: var(--header-bg);
+}

@@ -46,5 +46,75 @@ export function createEditor(container: HTMLElement, initialValue: string): Edit
     quickSuggestions: { other: true, comments: false, strings: false },
   })
 
-  return { editor, model }
+  let handle = { editor, model };
+  onlyAllowEditingBetweenRanges(handle, collectEditableRanges(initialValue));
+  return handle;
 }
+
+const EDITABLE_SECTION_START = 'EDITABLE-SECTION-START'
+const EDITABLE_SECTION_END = 'EDITABLE-SECTION-END'
+
+/**
+ * Finds every `EDITABLE-SECTION-START` / `EDITABLE-SECTION-END` marker pair and
+ * returns the 1-based line range *between* them (marker lines excluded).
+ * Pairs with no line in between, and unterminated starts, are skipped.
+ */
+function collectEditableRanges(input: string): { startLine: number; endLine: number }[] {
+  const ranges: { startLine: number; endLine: number }[] = []
+  const lines = input.split(/\r?\n/)
+  let openMarkerLine = -1
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+    if (line.includes(EDITABLE_SECTION_START)) {
+      openMarkerLine = i + 1
+    } else if (line.includes(EDITABLE_SECTION_END) && openMarkerLine !== -1) {
+      const startLine = openMarkerLine + 1
+      const endLine = i // line before the end marker (i is 0-based, so i === lineNumber - 1)
+      if (startLine <= endLine) ranges.push({ startLine, endLine })
+      openMarkerLine = -1
+    }
+  }
+
+  return ranges
+}
+
+
+function onlyAllowEditingBetweenRanges(editor: EditorHandle, editableLineRanges: { startLine: number; endLine: number }[]) {
+		if (!editor.model) return;
+
+		const decorations: monaco.editor.IModelDeltaDecoration[] = editableLineRanges.map(
+			({ startLine, endLine }) => ({
+				range: new monaco.Range(startLine, 1, endLine, editor.model.getLineMaxColumn(endLine)),
+				options: {
+					isWholeLine: true,
+					className: 'editable-line',
+					stickiness: monaco.editor.TrackedRangeStickiness.AlwaysGrowsWhenTypingAtEdges
+				}
+			})
+		);
+
+		const decorationCollection = editor.editor.createDecorationsCollection(decorations);
+
+		editor.editor.onDidChangeCursorSelection((_event) => {
+			const selection = editor.editor.getSelection();
+			if (!selection) return;
+
+			const selectionRange = new monaco.Range(
+				selection.startLineNumber,
+				selection.startColumn,
+				selection.endLineNumber,
+				selection.endColumn
+			);
+
+			const trackedRanges = decorationCollection.getRanges();
+
+			const isInsideEditableRange = trackedRanges.some((range) => {
+				return range.containsRange(selectionRange);
+			});
+
+			editor.editor.updateOptions({
+				readOnly: !isInsideEditableRange
+			});
+		});
+	}
